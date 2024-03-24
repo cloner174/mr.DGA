@@ -79,11 +79,12 @@ class PreProcess:
         self.data_col = None
         self.sorted_data = None
         self.input = None
-        self.emotion_col = None
+        self.emotion_col_name = None
+        self.emotion_col_num = None
         self.emotions = None
         self.data_col = None
         self.disturbu = []
-        self.stats = []
+        self.y = []
         self.sublists = []
         self.DataFrame = {
             'Mean' : [],
@@ -106,7 +107,7 @@ class PreProcess:
         else:
             self.data = pd.read_csv(self.input)
     
-    def initial_data(self, emotion_col = None, data_col = None, need_sort = True ) :
+    def initial_data(self, emotion_col = None,emotion_col_num = None, data_col = None, need_sort = True ) :
         
         self.n_cols = self.data.shape[1]
         self.n_rows = self.data.shape[0]
@@ -114,10 +115,13 @@ class PreProcess:
         
         if emotion_col:
             
-            self.emotion_col = emotion_col
+            self.emotion_col_name = emotion_col
+            self.emotion_col_num = emotion_col_num
         else:
             
-            self.emotion_col = 'emotion'
+            self.emotion_col_name = 'emotion'
+            self.emotion_col_num = 0
+            
         if data_col:
             
             self.data_col = data_col
@@ -129,9 +133,9 @@ class PreProcess:
             self.sorted_data = self.data
         else:
             
-            self.sorted_data = self.data.sort_values( by = self.emotion_col )
+            self.sorted_data = self.data.sort_values( by = self.emotion_col_name )
         
-        self.emotions = list( (self.data.loc[:, self.emotion_col]).unique() )
+        self.emotions = list( (self.data.loc[:, self.emotion_col_name]).unique() )
     
     def fix_data(self) :
         
@@ -176,7 +180,7 @@ class PreProcess:
         
         self.sorted_data = data
     
-    def run(self, n_ = None, range_ = None) :
+    def run(self, n_ = None, range_ = None, save_ = False, out_where_ = None) :
         
         if n_:
             n = n_
@@ -194,18 +198,38 @@ class PreProcess:
             temp_sub = Stats.sublist(temp, n)
             for any_list in temp_sub:
                 
+                self.y.append(self.sorted_data.iloc[i,self.emotion_col_num])
                 self.sublists.append(any_list)
         
         for any in self.sublists:
             
+            #print(len(self.sublists))
             temp_stat = Stats.stat(any)
-            self.stats.append(temp_stat)
-            self.DataFrame['Mean'].append( temp_stat[0] )
-            self.DataFrame['Median'].append( temp_stat[1] )
-            self.DataFrame['Mode'].append( temp_stat[2] )
-            self.DataFrame['STD'].append( temp_stat[3] )
-            self.DataFrame['Variance'].append( temp_stat[4] )
-            self.DataFrame['Quantile1'].append( temp_stat[5] )
-            self.DataFrame['Quantile2'].append( temp_stat[6] )
+            self.DataFrame['Mean'].append( np.float64(temp_stat[0]) )
+            self.DataFrame['Median'].append( np.float64(temp_stat[1]) )
+            self.DataFrame['Mode'].append( np.float64(temp_stat[2] ))
+            self.DataFrame['STD'].append( np.float64(temp_stat[3] ))
+            self.DataFrame['Variance'].append( np.float64(temp_stat[4] ))
+            self.DataFrame['Quantile1'].append( np.float64(temp_stat[5] ))
+            self.DataFrame['Quantile2'].append( np.float64(temp_stat[6]) )
         
-        return pd.DataFrame(self.DataFrame)
+        
+        data_x = pd.DataFrame(self.DataFrame, dtype = np.float64)
+        data_y = pd.Series(self.y, dtype = np.float64)        
+        
+        if save_:
+            
+            if out_where_:
+                
+                out_where = out_where_
+            else:
+                
+                out_where = r"output/data.csv"           
+            
+            data = data_x.assign( target = data_y )
+            data.to_csv(out_where, index=False)
+            print(f" The PrePared DataSet is now available here -->> {out_where}")
+            
+        else:
+            
+            return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = np.float64)

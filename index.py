@@ -4,7 +4,7 @@
 #github.com/cloner174
 #
 from main import PreProcess
-
+import numpy as np
 
 test = PreProcess()
 
@@ -16,6 +16,8 @@ test.initial_data(need_sort=False)
 
 test.json_fix()
 
-test_out = test.run(range_= 1000)
+test.run(save_=True)
 
-print(test_out)
+#test_out.to_csv('output/test_out.csv')
+
+#print(test_out)
