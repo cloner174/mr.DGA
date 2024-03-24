@@ -8,7 +8,7 @@ from main import PreProcess
 
 test = PreProcess()
 
-test.load_data(input_= 'sorted_data_pre.csv',index_col_ = 0)
+test.load_data(input_= 'data/sorted_data_pre.csv',index_col_ = 0)
 
 test.initial_data(need_sort=False)
 
