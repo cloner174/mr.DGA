@@ -1,23 +1,19 @@
-#         #           #              In The Name Of GOD   #
-#
-#cloner174.org@gmail.com
-#github.com/cloner174
-#
-from main import PreProcess
+import pandas as pd
 import numpy as np
+#from scipy import stats
+#import re
 
-test = PreProcess()
+data = pd.read_csv( 'data/data_from_main.csv' )
 
-test.load_data(input_= 'data/sorted_data_pre.csv',index_col_ = 0)
+print(type(data),
+      type(data.iloc[0,0]),
+      type(data.iloc[5,5]))
 
-test.initial_data(need_sort=False)
+X_ = data.drop('target', axis=1)
+y_ = data.values[:,7]
 
-#test.fix_data()
+X = np.asarray(X_)
+y = np.asarray(y_)
 
-test.json_fix()
 
-test.run(save_=True)
-
-#test_out.to_csv('output/test_out.csv')
-
-#print(test_out)
+from sklearn. import spli
