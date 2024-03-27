@@ -90,3 +90,103 @@ predictions = recognizer.predict(X_new)
 
 # Visualize the model architecture
 recognizer.visualize_model()
+
+
+
+
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.linear_model import LogisticRegression
+import pandas as pd
+import numpy as np
+data = pd.read_csv( 'data/data_from_main.csv' , dtype=np.float64)
+X_ = data.drop('target', axis=1)
+y_ = data.values[:,7]
+X = np.asarray(X_, dtype=np.float64)
+y = np.asarray(y_, dtype= int)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+import numpy as np
+# Convert y_train from pandas Series to numpy array and reshape it
+y = np.array(y_).reshape(-1, 1)
+# One-hot encode the target variable
+encoder = OneHotEncoder(sparse=False)
+y_train_encoded = encoder.fit_transform(y_train.reshape(-1, 1))
+y_test_encoded = encoder.transform(y_test.reshape(-1, 1))
+y_train_encoded = encoder.fit_transform(y_train)
+model = LogisticRegression(max_iter=1000)
+model.fit(X=X_train, y=y_train_encoded)
+accuracy = model.score(X_test, y_test_encoded)
+print("Accuracy:", accuracy)
+
+
+
+
+
+
+
+
+
+
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+data = pd.read_csv( 'data/data_from_main.csv' , dtype=np.float64)
+# Assuming X is your feature matrix and y is your target variable
+data = pd.DataFrame(X_new, columns=['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7'])
+data['target'] = y
+# Calculate correlation coefficients
+correlation_matrix = data.corr()
+# Visualize correlation matrix as heatmap
+plt.figure(figsize=(10, 8))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", annot_kws={"size": 10})
+plt.title('Correlation Matrix')
+plt.show()
+
+
+
+
+
+
+from sklearn.preprocessing import PolynomialFeatures
+# Assuming X is your feature matrix and y is your target variable
+# Create polynomial features
+poly = PolynomialFeatures(degree=2, include_bias=False)
+X_poly = poly.fit_transform(X)
+# Concatenate the polynomial features with the original features
+X_new = pd.DataFrame(X_poly, columns=poly.get_feature_names_out(['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7']))
+# Now you can use X_new for further analysis or modeling
+
+
+
+
+
+
+
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+rf_classifier.fit(X_train, y_train)
+y_pred = rf_classifier.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print("Random Forest Accuracy:", accuracy)
+
+
+
+
+
+
+from sklearn.svm import SVC
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+svm_classifier = SVC(kernel='rbf', gamma='scale', random_state=42)
+svm_classifier.fit(X_train, y_train)
+y_pred = svm_classifier.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)
+print("SVM with RBF Kernel Accuracy:", accuracy)
