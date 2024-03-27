@@ -86,6 +86,7 @@ class PreProcess:
         self.disturbu = []
         self.y = []
         self.sublists = []
+        self.dataframe = []
         self.DataFrame = {
             'Mean' : [],
             'Median' : [],
@@ -149,9 +150,9 @@ class PreProcess:
         print("All Done, \n  Since it has been a little tricky doing this process, All the generated data from this particlur function \n is in output folder ")
         self.sorted_data.to_csv('sorted_data_pre.csv')
     
-    def json_fix(self, returArray = False, ncol_start = None, ncol_end = None):
+    def json_fix(self, returArray = False, ncol_start = None, ncol_end = None, return_ = False):
         #                                                            
-        #                                                           # Not Inplace, You should assing it to a variable to store changes #
+        #                      # Not Inplace, You should assing it to a variable to store changes #
         data = self.sorted_data
         data_ = np.array(data)
         if ncol_start:
@@ -179,8 +180,11 @@ class PreProcess:
             data = data.set_axis( self.col_names, axis= 'columns' )
         
         self.sorted_data = data
+        
+        if return_:
+            return self.sorted_data
     
-    def run(self, n_ = None, range_ = None, save_ = False, out_where_ = None) :
+    def run(self, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
         
         if n_:
             n = n_
@@ -200,6 +204,32 @@ class PreProcess:
                 
                 self.y.append(self.sorted_data.iloc[i,self.emotion_col_num])
                 self.sublists.append(any_list)
+
+        if dim3_:
+            
+            for any in self.sublists:
+                temp_stat = Stats.stat(any)
+                self.dataframe.append(temp_stat)
+            
+            data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
+            data_y = pd.Series(self.y, dtype = np.float64)
+            
+            if save_:
+                
+                if out_where_:
+                    
+                    out_where = out_where_
+                else:
+                    
+                    out_where = r"output/dataframe.csv"
+
+                data = data_x.assign( target = data_y )
+                data.to_csv(out_where, index=False)
+                print(f" The PrePared DataSet is now available here -->> {out_where}")
+                return
+            
+            else:
+                return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = np.float64)
         
         for any in self.sublists:
             

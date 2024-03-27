@@ -22,6 +22,8 @@ test.initial_data(need_sort=False)
 
 test.json_fix()
 
+# test.run(dim3_=True, save_=True) #  -->> This is for when need 3dim!
+
 test.run(save_=True)
 
 #x_, y_ = test.run()
