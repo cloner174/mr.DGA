@@ -138,19 +138,15 @@ class PreProcess:
         
         self.emotions = list( (self.data.loc[:, self.emotion_col_name]).unique() )
     
-    def fix_data(self) :
+    def save_data(self, data_ = None, name_ = 'output/sorted_data.csv') :
         
-        print(" This may take a few while,, \n  Sit tite and wait till its done! ")
-        for i in range(self.n_rows) :
-            
-            (self.sorted_data).iloc[i, self.data_col] = re.sub('\D',r',', (self.sorted_data).iloc[i, self.data_col])
-            (self.sorted_data).iloc[i, self.data_col] = re.sub("^", r"[", (self.sorted_data).iloc[i, self.data_col])
-            (self.sorted_data).iloc[i, self.data_col] = re.sub("$", r"]", (self.sorted_data).iloc[i, self.data_col])
-        
-        print("All Done, \n  Since it has been a little tricky doing this process, All the generated data from this particlur function \n is in output folder ")
-        self.sorted_data.to_csv('sorted_data_pre.csv')
+        if data_:
+            data_.to_csv(name_)
+        else:
+            self.sorted_data.to_csv(name_)
     
-    def json_fix(self, returArray = False, ncol_start = None, ncol_end = None, return_ = False):
+    
+    def fix_data(self, returnArray = False, ncol_start = None, ncol_end = None, return_ = False, save_ = False):
         #                                                            
         #                      # Not Inplace, You should assing it to a variable to store changes #
         data = self.sorted_data
@@ -168,10 +164,11 @@ class PreProcess:
             
             for j in range(start_, end_):                    #Columns
                 
-                temp_ =  json.loads( data_[i, j] )
-                data_[i, j] = temp_
+                temp_ =  data_[i, j]
+                pix_val = np.array(temp_.split(), dtype=int)
+                data_[i, j] = pix_val
         
-        if returArray != False:
+        if returnArray != False:
             
             data = data_
         
@@ -183,8 +180,12 @@ class PreProcess:
         
         if return_:
             return self.sorted_data
+        
+        if save_:
+            self.save_data()
     
-    def run(self, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
+    
+    def stat_jobs(self, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
         
         if n_:
             n = n_

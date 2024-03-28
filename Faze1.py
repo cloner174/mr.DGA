@@ -17,15 +17,9 @@ test.load_data(input_= 'data/sorted_data_pre.csv',index_col_ = 0)
 
 test.initial_data(need_sort=False)
 
-#test.fix_data()  # We run it once before 
-                  # The out put of this step, was provided above !
+test.fix_data(save_=True)
 
-test.json_fix()
-
-# test.run(dim3_=True, save_=True) #  -->> This is for when need 3dim!
-
-test.run(save_=True)
-
+# test.stat_jobs(dim3_=True, save_=True) #  -->> This is for when need 3dim!
+# test.stat_jobs(save_=True)
 #x_, y_ = test.run()
-
 #print(x_.shape, y_.shape)
