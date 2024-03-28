@@ -108,7 +108,7 @@ class PreProcess:
         else:
             self.data = pd.read_csv(self.input)
     
-    def initial_data(self, emotion_col = None,emotion_col_num = None, data_col = None, need_sort = True ) :
+    def initial_data(self, emotion_col = None, emotion_col_num = None, data_col = None, need_sort = True ) :
         
         self.n_cols = self.data.shape[1]
         self.n_rows = self.data.shape[0]
@@ -143,7 +143,7 @@ class PreProcess:
         if data_:
             data_.to_csv(name_)
         else:
-            self.sorted_data.to_csv(name_)
+            self.sorted_data.to_csv(name_, index= False)
     
     
     def fix_data(self, returnArray = False, ncol_start = None, ncol_end = None, return_ = False, save_ = False):
