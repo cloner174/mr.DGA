@@ -201,8 +201,10 @@ class PreProcess:
         if split_ == False:
             for i in range(rows_) :
                 temp = (self.sorted_data).values[i, self.data_col]
+                temp_emo = (self.sorted_data).values[i, self.emotion_col_num]
                 temp_stat = Stats.stat(temp)
                 self.dataframe.append(temp_stat)
+                self.y.append(temp_emo)
             
             data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
             data_y = pd.Series(self.y)
@@ -216,6 +218,7 @@ class PreProcess:
                     
                     out_where = r"output/dataframeALL.csv"
                 
+                data_x.set_axis(['Mean','Median','Mode','STD','Variance','Quantile1','Quantile2'], axis=1)
                 data = data_x.assign( target = data_y )
                 data.to_csv(out_where, index=False)
                 print(f" The PrePared DataSet is now available here -->> {out_where}")
