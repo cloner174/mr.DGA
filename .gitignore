@@ -5,6 +5,7 @@
 /output/data2.csv
 /output/sorted_data_all_done.csv
 /output/sorted_data_pre.csv
+output/sorted_data.csv
 
 __pycache__/
 

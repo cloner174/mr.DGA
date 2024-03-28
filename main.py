@@ -102,7 +102,7 @@ class PreProcess:
         if input_:
             self.input = input_
         else:
-            self.input = 'dataset.csv'
+            self.input = 'data/dataset.csv'
         if index_col_ != None:
             self.data = pd.read_csv(self.input, index_col= index_col_ )
         else:
@@ -132,8 +132,8 @@ class PreProcess:
         if need_sort != True :
             
             self.sorted_data = self.data
+        
         else:
-            
             self.sorted_data = self.data.sort_values( by = self.emotion_col_name )
         
         self.emotions = list( (self.data.loc[:, self.emotion_col_name]).unique() )
@@ -185,7 +185,7 @@ class PreProcess:
             self.save_data()
     
     
-    def stat_jobs(self, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
+    def stat_jobs(self, split_ = True, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
         
         if n_:
             n = n_
@@ -197,6 +197,33 @@ class PreProcess:
         else:
             rows_ = self.n_rows
         
+        
+        if split_ == False:
+            for i in range(rows_) :
+                temp = (self.sorted_data).values[i, self.data_col]
+                temp_stat = Stats.stat(temp)
+                self.dataframe.append(temp_stat)
+            
+            data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
+            data_y = pd.Series(self.y)
+            
+            if save_:
+                
+                if out_where_:
+                    
+                    out_where = f"{out_where_}/dataframeALL.csv"
+                else:
+                    
+                    out_where = r"output/dataframeALL.csv"
+                
+                data = data_x.assign( target = data_y )
+                data.to_csv(out_where, index=False)
+                print(f" The PrePared DataSet is now available here -->> {out_where}")
+                return
+            else:
+                return np.asarray(data_x, dtype = np.float64), np.asarray(data_y)     
+        
+        
         for i in range(rows_) :
             
             temp = (self.sorted_data).values[i, self.data_col]
@@ -205,11 +232,12 @@ class PreProcess:
                 
                 self.y.append(self.sorted_data.iloc[i,self.emotion_col_num])
                 self.sublists.append(any_list)
-
+        
+        
         if dim3_:
             
-            for any in self.sublists:
-                temp_stat = Stats.stat(any)
+            for any_ in self.sublists:
+                temp_stat = Stats.stat(any_)
                 self.dataframe.append(temp_stat)
             
             data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
@@ -223,7 +251,7 @@ class PreProcess:
                 else:
                     
                     out_where = r"output/dataframe.csv"
-
+                
                 data = data_x.assign( target = data_y )
                 data.to_csv(out_where, index=False)
                 print(f" The PrePared DataSet is now available here -->> {out_where}")
@@ -232,10 +260,10 @@ class PreProcess:
             else:
                 return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = np.float64)
         
-        for any in self.sublists:
+        for any_ in self.sublists:
             
             #print(len(self.sublists))
-            temp_stat = Stats.stat(any)
+            temp_stat = Stats.stat(any_)
             self.DataFrame['Mean'].append( np.float64(temp_stat[0]) )
             self.DataFrame['Median'].append( np.float64(temp_stat[1]) )
             self.DataFrame['Mode'].append( np.float64(temp_stat[2] ))
