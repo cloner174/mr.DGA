@@ -7,7 +7,7 @@ from warnings import warn
 import pandas as pd
 import numpy as np
 from time import sleep
-from main import Stats
+from main.stats import Stats
 
 class PreProcess :
     def __init__(self) :
@@ -186,7 +186,7 @@ class PreProcess :
                 
                 if out_where_:
                     
-                    out_where = f"{out_where_}/dataframeALL.csv"
+                    out_where = out_where_
                 else:
                     
                     out_where = r"data/Faze1/output/CSVs/dataframeALL.csv"
@@ -275,7 +275,8 @@ class PreProcess :
             n_col = None,
             save_ = False,
             return_ = False,
-            self_needed = False) :
+            self_needed = False,
+            name_ = 'data/Faze1/output/CSVs/AllWithEachCol.csv') :
         
         warn("\nThe Only Supported Type for data is Python-Dict , use dict() to retype if its a DataFrame \n", category=UserWarning, stacklevel=2)
         sleep(1.15)
@@ -307,25 +308,25 @@ class PreProcess :
         temp_df = pd.concat([data, extracted], axis=1)
         data_new = temp_df.drop(data.columns[n_col], axis=1)
         if save_ :
+            data_new.to_csv(name_)
             if self != None:
-                self.save_data( data_ = data_new, name_= 'data/Faze1/output/CSVs/AllWithEachCol.csv')
                 if self_needed:
-                    self.extracted = extracted
-                if return_:
-                    return extracted
+                    self.extracted = data_new
+            if return_:
+                return data_new
             else:
-                data_new.to_csv()
+                data_new.to_csv(name_)
         
         elif return_:
             if self_needed:
                 if self != None:
-                    self.extracted = extracted
+                    self.extracted = data_new
                 else:
                     pass
-            return extracted
+            return data_new
         
         elif self_needed:
-            self.extracted = extracted
+            self.extracted = data_new
             return
         else:
             print(" This ProceSS iS EXecUtable !")

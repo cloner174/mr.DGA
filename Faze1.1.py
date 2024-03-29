@@ -14,6 +14,6 @@ test.initial_data()
 
 test.fix_data()
 
-test.stat_jobs(n_ = 2, 
+test.stat_jobs(split_=False,
                save_=True, 
-               out_where_='data/Faze1/output/CSVs/Stat_jobs_n2.csv')
+               out_where_='data/Faze1/output/CSVs/Stat_jobs_noSplit.csv')

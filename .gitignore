@@ -7,6 +7,8 @@ __pycache__/
 /Rside/
 /scripts/
 /index.py
+/main/__pycache__
+/data/Faze1/output/CSVs/AllWithEachCol.csv
 #*.py[cod]
 #*$py.class
 

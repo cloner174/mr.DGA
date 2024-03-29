@@ -14,6 +14,6 @@ test.initial_data()
 
 test.fix_data()
 
-test.stat_jobs(n_ = 2, 
-               save_=True, 
-               out_where_='data/Faze1/output/CSVs/Stat_jobs_n2.csv')
+test.extract_all_with_each_col(save_=True)
+
+print('done')
