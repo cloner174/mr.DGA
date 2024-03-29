@@ -32,3 +32,25 @@ test.get_best_features(MinMax_X = True) #Best Until Now
 test.cal_corr()
 
 test.models()
+
+
+# #
+
+from new import SKlearn
+
+test = SKlearn()
+
+test.load_data_from_PreProcess()
+
+test.initial_data(target_col_name='emotion')
+
+test.manual_scale()
+
+#NOOOOOOOOT WORKINGYRST! $##
+#test.cal_corr()
+
+#test.get_best_features(MinMax_X = True) #Best Until Now
+
+#test.cal_corr()
+
+#test.models()

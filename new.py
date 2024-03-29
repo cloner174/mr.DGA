@@ -9,10 +9,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
+
 class SKlearn:
     
     def __init__(self) :
         
+        self.data = None
         self.X = None
         self.y = None
         self.corr_ = None
@@ -26,12 +28,21 @@ class SKlearn:
     
     def load_data(self, data_path) :
         
-        
         self.data = data_path
         self.data = pd.read_csv(self.data)
     
     
-    def initial_data(self, target_col_name = 'target', return_ = False, also_return_data = False) :
+    def load_data_from_PreProcess(self) :
+        
+        from main import PreProcess
+        
+        pre_process = PreProcess()
+        pre_process.load_data()
+        pre_process.initial_data()
+        self.data = pre_process.fix_data(return_=True)    
+    
+    
+    def initial_data(self, target_col_name = 'target', return_Xy = False, also_return_data = False) :
         
         self.tar_col_name = target_col_name
         
@@ -41,16 +52,18 @@ class SKlearn:
         
         self.y = self.data.loc[:,self.tar_col_name]
         
-        if return_:
+        if return_Xy:
             if also_return_data:
-                return self.data, self.X, self.y
+                return self.X, self.y, self.data
             else:
                 return self.X, self.y
+
+                
     
     
     def make_array(self, reType_All = False, return_ = True) :
         
-        self.initial_data()
+        self.initial_data(self.tar_col_name)
         
         X = np.asarray(self.X)
         
@@ -89,11 +102,11 @@ class SKlearn:
         if all_:
             self.standard_X = stand_scale.fit_transform(self.X)
             self.MinMax_X = relu_scale.fit_transform(self.X)
-            self.data = pd.DataFrame(self.standard_X)
-            self.data['target'] = self.y
+            self.data_stan = pd.DataFrame(self.standard_X)
+            self.data_stan = self.data_stan.assign(target = self.y)
             
             if return_:
-                return self.data
+                return self.data_stan
             else:
                 return
         
@@ -108,16 +121,20 @@ class SKlearn:
     
     def manual_scale(self) :
         
-        self.Manual_X, _ = self.make_array()
+        self.Manual_X, self.y = self.make_array()
+        
         for i in range(self.Manual_X.shape[0]) :
             for j in range(self.Manual_X.shape[1]) :
                 
-                
-                temp = self.Manual_X[i,j]
-                if temp > 0.49 :
-                    self.Manual_X[i,j] = 0
-                else:
-                    self.Manual_X[i,j] = 1
+                temp_ = self.Manual_X[i,j]
+                for k in range(len(temp_)) :
+                    temp = temp_[k]
+                    if temp > 0.49 :
+                        self.Manual_X[i,j][k] = 0
+                    else:
+                        self.Manual_X[i,j][k] = 1
+        
+        return self.Manual_X
     
     
     def get_best_features(self,feturs_to_slct = 5,
@@ -157,11 +174,11 @@ class SKlearn:
             data = data_x.assign( target = data_y )
             if Just_for_corr:
                 self.data = data
-                self.initial_data()
+                self.initial_data(self.tar_col_name)
                 return
             else:
                 self.data = data
-                self.initial_data()
+                self.initial_data(self.tar_col_name)
         
         if MinMax_X:
             data_x = pd.DataFrame(self.MinMax_X)
@@ -169,11 +186,11 @@ class SKlearn:
             data = data_x.assign( target = data_y )
             if Just_for_corr:
                 self.data = data
-                self.initial_data()
+                self.initial_data(self.tar_col_name)
                 return
             else:
                 self.data = data
-                self.initial_data()
+                self.initial_data(self.tar_col_name)
         
         if manual_X_scaled:
             data_x = pd.DataFrame(self.Manual_X)
@@ -181,11 +198,11 @@ class SKlearn:
             data = data_x.assign( target = data_y )
             if Just_for_corr:
                 self.data = data
-                self.initial_data()
+                self.initial_data(self.tar_col_name)
                 return
             else:
                 self.data = data
-                self.initial_data()                 
+                self.initial_data(self.tar_col_name)                 
         
         gbf.fit(X, y)
         
@@ -199,7 +216,7 @@ class SKlearn:
         
                 
         self.data = self.data.drop(temp_del_invalid_col, axis=1)
-        self.initial_data()
+        self.initial_data(self.tar_col_name)
         
         if silently == False:
             print("Selected Features:", gbf.support_)
