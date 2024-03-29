@@ -1,3 +1,8 @@
+#         #           #              In The Name Of GOD   #
+#
+#cloner174.org@gmail.com
+#github.com/cloner174
+#
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -9,8 +14,10 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
+class SKlearn :
 
-def __init__(self) :
+
+    def __init__(self) :
         
         self.data = None
         self.X = None
@@ -24,13 +31,13 @@ def __init__(self) :
         self.Manual_X = None
 
 
-def load_data(self, data_path) :
+    def load_data(self, data_path) :
         
         self.data = data_path
         self.data = pd.read_csv(self.data)
 
 
-def load_data_from_PreProcess(self) :
+    def load_data_from_PreProcess(self) :
         
         from main import PreProcess
         
@@ -40,7 +47,7 @@ def load_data_from_PreProcess(self) :
         self.data = pre_process.fix_data(return_=True)    
 
 
-def initial_data(self, target_col_name = 'target', return_Xy = False, also_return_data = False) :
+    def initial_data(self, target_col_name = 'target', return_Xy = False, also_return_data = False) :
         
         self.tar_col_name = target_col_name
         
@@ -57,7 +64,7 @@ def initial_data(self, target_col_name = 'target', return_Xy = False, also_retur
                 return self.X, self.y   
 
 
-def make_array(self, reType_All = False, return_ = True) :
+    def make_array(self, reType_All = False, return_ = True) :
         
         self.initial_data(self.tar_col_name)
         
@@ -75,7 +82,7 @@ def make_array(self, reType_All = False, return_ = True) :
         return X, y
 
 
-def cal_corr(self, show_ = True, return_ = False) :
+    def cal_corr(self, show_ = True, return_ = False) :
         
         self.corr_ = self.data.corr()
         
@@ -91,7 +98,7 @@ def cal_corr(self, show_ = True, return_ = False) :
         plt.show()
 
 
-def scaling(self, all_ = False, return_ = False) :
+    def scaling(self, all_ = False, return_ = False) :
         
         stand_scale = StandardScaler()
         relu_scale =  MinMaxScaler()        
@@ -116,7 +123,7 @@ def scaling(self, all_ = False, return_ = False) :
             return self.standard_X, self.MinMax_X
 
 
-def manual_scale(self) :
+    def manual_scale(self) :
         
         self.Manual_X, self.y = self.make_array()
         
@@ -134,7 +141,7 @@ def manual_scale(self) :
         return self.Manual_X
 
 
-def get_best_features(self,feturs_to_slct = 5,
+    def get_best_features(self,feturs_to_slct = 5,
                           standard_X = False,
                           MinMax_X = False ,
                           manual_X_scaled = False,
@@ -222,7 +229,7 @@ def get_best_features(self,feturs_to_slct = 5,
             return self.data
 
 
-def models(self, to_save_ = 'output/RandomForestClassifier.csv',
+    def models(self, to_save_ = 'output/RandomForestClassifier.csv',
                test_size_ = 0.2, n_estimators_ = 1000, ) :
         
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size_)
@@ -240,3 +247,5 @@ def models(self, to_save_ = 'output/RandomForestClassifier.csv',
         accuracy = accuracy_score(y_test, y_pred)
         
         print("Random Forest Accuracy:", accuracy)
+
+#end#

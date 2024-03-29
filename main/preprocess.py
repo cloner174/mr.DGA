@@ -7,10 +7,10 @@ from warnings import warn
 import pandas as pd
 import numpy as np
 from time import sleep
+from main import Stats
 
-
-
-def __init__(self) :
+class PreProcess :
+    def __init__(self) :
         
         self.data = None
         self.n_rows = None
@@ -39,19 +39,19 @@ def __init__(self) :
         self.extracted = None
     
     
-def load_data(self, input_ = None, index_col_ = None) :
+    def load_data(self, input_ = None, index_col_ = None) :
         
         if input_:
             self.input = input_
         else:
-            self.input = 'Faze1/input/dataset.csv'
+            self.input = 'data/Faze1/input/dataset.csv'
         if index_col_ != None:
             self.data = pd.read_csv(self.input, index_col= index_col_ )
         else:
             self.data = pd.read_csv(self.input)
     
     
-def initial_data(self, 
+    def initial_data(self, 
                      emotion_col = None, 
                      emotion_col_num = None, 
                      data_col = None, 
@@ -89,27 +89,27 @@ def initial_data(self,
             self.emotions = list( (self.data.loc[:, self.emotion_col_name]).unique() )
     
     
-def name_helper(self):
+    def name_helper(self):
         
         import uuid
         self.random_id = uuid.uuid4().hex
     
     
-def save_data(self, data_ = None, name_ = None) :
+    def save_data(self, data_ = None, name_ = None) :
         
         
         if name_:
             name_ = name_
         else:
             self.name_helper()
-            name_ = f"Faze1/output/CSVs/data{self.random_id}.csv"
+            name_ = f"data/Faze1/output/CSVs/data{self.random_id}.csv"
         if data_:
             data_.to_csv(name_)
         else:
             self.sorted_data.to_csv(name_, index= False)
     
     
-def fix_data(self, returnArray = False, 
+    def fix_data(self, returnArray = False, 
                  ncol_start = None, 
                  ncol_end = None, 
                  return_ = False, 
@@ -153,7 +153,7 @@ def fix_data(self, returnArray = False,
             return self.sorted_data            
     
     
-def stat_jobs(self, split_ = True, 
+    def stat_jobs(self, split_ = True, 
                   n_ = None, 
                   range_ = None, 
                   dim3_ = False, 
@@ -189,7 +189,7 @@ def stat_jobs(self, split_ = True,
                     out_where = f"{out_where_}/dataframeALL.csv"
                 else:
                     
-                    out_where = r"Faze1/output/CSVs/dataframeALL.csv"
+                    out_where = r"data/Faze1/output/CSVs/dataframeALL.csv"
                 
                 data_x = data_x.set_axis(['Mean','Median','Mode','STD','Variance','Quantile1','Quantile2'], axis=1)
                 data = data_x.assign( target = data_y )
@@ -259,7 +259,7 @@ def stat_jobs(self, split_ = True,
                 out_where = out_where_
             else:
                 self.name_helper()
-                out_where = f"Faze1/output/CSVs/data{self.random_id}.csv"           
+                out_where = f"data/Faze1/output/CSVs/data{self.random_id}.csv"           
             
             data = data_x.assign( target = data_y )
             data.to_csv(out_where, index=False)
@@ -270,7 +270,7 @@ def stat_jobs(self, split_ = True,
             return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
     
     
-def extract_all_with_each_col(self = None,
+    def extract_all_with_each_col(self = None,
             data_: dict = None,
             n_col = None,
             save_ = False,
@@ -308,7 +308,7 @@ def extract_all_with_each_col(self = None,
         data_new = temp_df.drop(data.columns[n_col], axis=1)
         if save_ :
             if self != None:
-                self.save_data( data_ = data_new, name_= 'Faze1/output/CSVs/AllWithEachCol.csv')
+                self.save_data( data_ = data_new, name_= 'data/Faze1/output/CSVs/AllWithEachCol.csv')
                 if self_needed:
                     self.extracted = extracted
                 if return_:

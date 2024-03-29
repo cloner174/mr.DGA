@@ -1,7 +1,10 @@
 import numpy as np
 from scipy import stats
 
-def sublist(List, n):
+class Stats:
+    
+    
+    def sublist(List, n):
         
         li = List
         len_ = len(li)
@@ -27,7 +30,7 @@ def sublist(List, n):
         return ll
     
     
-def stat(subset, quantiles_ = None):
+    def stat(subset, quantiles_ = None):
         #Q = input( " Please Inter the prob Number for quantiles ...... Leave it blank for defult .. \n   You may inter here .....--->>>>.....")
         #if Q == '':
         #    quantiles = [0.2, 0.25, 0.27, 0.3, 0.33, 0.35, 0.36, 0.60, 0.61, 0.64, 0.66, 0.69, 0.72, 0.75, 0.95]
@@ -54,3 +57,4 @@ def stat(subset, quantiles_ = None):
             *[np.quantile(subset, q) for q in quantiles]
         ]
 
+#end#
