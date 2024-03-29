@@ -1,10 +1,12 @@
 # Byte-compiled / optimized / DLL files
-/data/
-/output/
-Faze1/input/dataset.csv
+/data/Faze1/input/dataset.csv
+/docs
+/out
+/Gallary
 __pycache__/
 /Rside/
 /scripts/
+/index.py
 #*.py[cod]
 #*$py.class
 
