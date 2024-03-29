@@ -178,11 +178,11 @@ class PreProcess:
         
         self.sorted_data = data
         
-        if return_:
-            return self.sorted_data
-        
         if save_:
             self.save_data()
+        
+        if return_:
+            return self.sorted_data            
     
     
     def stat_jobs(self, split_ = True, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
@@ -218,7 +218,7 @@ class PreProcess:
                     
                     out_where = r"output/dataframeALL.csv"
                 
-                data_x.set_axis(['Mean','Median','Mode','STD','Variance','Quantile1','Quantile2'], axis=1)
+                data_x = data_x.set_axis(['Mean','Median','Mode','STD','Variance','Quantile1','Quantile2'], axis=1)
                 data = data_x.assign( target = data_y )
                 data.to_csv(out_where, index=False)
                 print(f" The PrePared DataSet is now available here -->> {out_where}")

@@ -19,7 +19,7 @@ X = np.asarray(X_, dtype=np.float64)
 y = np.asarray(y_, dtype= int)
 
 
-# Assuming X is your feature matrix and y is your target variable
+# X is feature and y is target
 
 #             UseFull Other Time  #
 #data = pd.DataFrame(X, columns=['feature1', 'feature2', 'feature3', 'feature4', 'feature5', 'feature6', 'feature7'])
