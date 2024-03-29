@@ -1,6 +1,15 @@
 import numpy as np
 from scipy import stats
 
+
+class NameHelper:
+    def __init__(self):
+        pass
+    def __str__(self):
+        import uuid
+        return f"{uuid.uuid4().hex}"
+
+
 class Stats:
     
     

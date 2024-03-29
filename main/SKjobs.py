@@ -82,7 +82,11 @@ class SKlearn :
         return X, y
 
 
-    def cal_corr(self, show_ = True, return_ = False) :
+    def cal_corr(self,
+                 show_ = True,
+                 return_ = False,
+                 save_ = False,
+                 save_where = 'data/Faze1/output/Pics/cal_corr') :
         
         self.corr_ = self.data.corr()
         
@@ -95,9 +99,11 @@ class SKlearn :
         plt.figure(figsize=(10, 8))
         sns.heatmap(self.corr_, annot=True, cmap='coolwarm', fmt=".2f", annot_kws={"size": 10})
         plt.title('Correlation Matrix')
+        if save_:
+            plt.savefig(save_where)
         plt.show()
-
-
+    
+    
     def scaling(self, all_ = False, return_ = False) :
         
         stand_scale = StandardScaler()
@@ -142,6 +148,8 @@ class SKlearn :
 
 
     def get_best_features(self,feturs_to_slct = 5,
+                          solver_ = 'sag',
+                          C_ = 0.1,
                           standard_X = False,
                           MinMax_X = False ,
                           manual_X_scaled = False,
@@ -149,7 +157,8 @@ class SKlearn :
                           silently = True, 
                           return_ = False) :
         
-        self.logist_model = LogisticRegression(C=0.1, solver='sag')
+        
+        self.logist_model = LogisticRegression( C = C_, solver = solver_ )
         
         gbf = RFE( estimator = self.logist_model, 
                   n_features_to_select = feturs_to_slct)
@@ -228,8 +237,8 @@ class SKlearn :
         if return_:
             return self.data
 
-
-    def models(self, to_save_ = 'output/RandomForestClassifier.csv',
+    
+    def models(self, save_ = True, to_save_ = 'data/Faze1/output/CSVs/RandomForestClassifier.csv',
                test_size_ = 0.2, n_estimators_ = 1000, ) :
         
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size_)
@@ -240,11 +249,15 @@ class SKlearn :
         
         y_pred = rf_classifier.predict(X_test)
         
+        accuracy = accuracy_score(y_test, y_pred)
+        
+        if save_ == False:
+            print("Random Forest Accuracy:", accuracy)
+            return
+        
         y_test = pd.DataFrame(y_test)
         to_save = y_test.assign( y_pred = y_pred )
         to_save.to_csv(to_save_)
-        
-        accuracy = accuracy_score(y_test, y_pred)
         
         print("Random Forest Accuracy:", accuracy)
 
