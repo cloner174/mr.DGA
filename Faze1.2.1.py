@@ -4,7 +4,9 @@
 #github.com/cloner174
 #
 from main.SKjobs import SKlearn
-from main.preprocess import PreProcess
+from main.stats import NameHelper
+
+
 PATHes_from_before = {
     'Stat_jobs_n2' : 'data/Faze1/output/CSVs/Stat_jobs_n2.csv',
     'Stat_jobs_noSplit' : 'data/Faze1/output/CSVs/Stat_jobs_noSplit.csv',
@@ -20,6 +22,10 @@ test.cal_corr()
 
 test.get_best_features()
 
-test.cal_corr()
+id_ = NameHelper()
+
+test.cal_corr(save_= True,
+              save_where= f"data/Faze1/output/Pics/cal_corr/Stat_jobs_n2")
+
 
 test.models()

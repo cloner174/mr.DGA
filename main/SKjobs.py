@@ -13,9 +13,11 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
+from main.stats import NameHelper
+
 
 class SKlearn :
-
+    
 
     def __init__(self) :
         
@@ -99,8 +101,10 @@ class SKlearn :
         plt.figure(figsize=(10, 8))
         sns.heatmap(self.corr_, annot=True, cmap='coolwarm', fmt=".2f", annot_kws={"size": 10})
         plt.title('Correlation Matrix')
+        
         if save_:
-            plt.savefig(save_where)
+            id_ = NameHelper()
+            plt.savefig(f"{save_where}/{id_}.jpg")
         plt.show()
     
     
@@ -237,8 +241,8 @@ class SKlearn :
         if return_:
             return self.data
 
-    
-    def models(self, save_ = True, to_save_ = 'data/Faze1/output/CSVs/RandomForestClassifier.csv',
+
+    def models(self, save_ = True, to_save_ = 'data/Faze1/output/CSVs',
                test_size_ = 0.2, n_estimators_ = 1000, ) :
         
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size_)
@@ -257,7 +261,8 @@ class SKlearn :
         
         y_test = pd.DataFrame(y_test)
         to_save = y_test.assign( y_pred = y_pred )
-        to_save.to_csv(to_save_)
+        id_ = NameHelper()
+        to_save.to_csv(f"{to_save_}/RandomForestClassifier{id_}.csv")
         
         print("Random Forest Accuracy:", accuracy)
 
