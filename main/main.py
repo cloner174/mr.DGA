@@ -3,12 +3,11 @@
 #cloner174.org@gmail.com
 #github.com/cloner174
 #
+from warnings import warn
 import pandas as pd
 import numpy as np
 from scipy import stats
-import json
-import re
-
+from time import sleep
 
 
 class Stats:
@@ -96,19 +95,26 @@ class PreProcess:
             'Quantile1' : [],
             'Quantile2' : []
         }
+        self.extracted = None
+    
     
     def load_data(self, input_ = None, index_col_ = None) :
         
         if input_:
             self.input = input_
         else:
-            self.input = 'data/dataset.csv'
+            self.input = 'Faze1/input/dataset.csv'
         if index_col_ != None:
             self.data = pd.read_csv(self.input, index_col= index_col_ )
         else:
             self.data = pd.read_csv(self.input)
     
-    def initial_data(self, emotion_col = None, emotion_col_num = None, data_col = None, need_sort = True ) :
+    
+    def initial_data(self, 
+                     emotion_col = None, 
+                     emotion_col_num = None, 
+                     data_col = None, 
+                     need_sort = True ) :
         
         self.n_cols = self.data.shape[1]
         self.n_rows = self.data.shape[0]
@@ -136,17 +142,38 @@ class PreProcess:
         else:
             self.sorted_data = self.data.sort_values( by = self.emotion_col_name )
         
-        self.emotions = list( (self.data.loc[:, self.emotion_col_name]).unique() )
+        if emotion_col_num:
+            self.emotions = list( (self.data.iloc[:, self.emotion_col_num]).unique() )
+        else:
+            self.emotions = list( (self.data.loc[:, self.emotion_col_name]).unique() )
     
-    def save_data(self, data_ = None, name_ = 'output/sorted_data.csv') :
+    
+    def name_helper(self):
         
+        import uuid
+        self.random_id = uuid.uuid4().hex
+    
+    
+    def save_data(self, data_ = None, name_ = None) :
+        
+        
+        if name_:
+            name_ = name_
+        else:
+            self.name_helper()
+            name_ = f"Faze1/output/CSVs/data{self.random_id}.csv"
         if data_:
             data_.to_csv(name_)
         else:
             self.sorted_data.to_csv(name_, index= False)
     
     
-    def fix_data(self, returnArray = False, ncol_start = None, ncol_end = None, return_ = False, save_ = False):
+    def fix_data(self, returnArray = False, 
+                 ncol_start = None, 
+                 ncol_end = None, 
+                 return_ = False, 
+                 save_ = False,
+                 name_ = None):
         #                                                            
         #                      # Not Inplace, You should assing it to a variable to store changes #
         data = self.sorted_data
@@ -179,13 +206,18 @@ class PreProcess:
         self.sorted_data = data
         
         if save_:
-            self.save_data()
+            self.save_data(name_ = name_)
         
         if return_:
             return self.sorted_data            
     
     
-    def stat_jobs(self, split_ = True, n_ = None, range_ = None, dim3_ = False, save_ = False, out_where_ = None) :
+    def stat_jobs(self, split_ = True, 
+                  n_ = None, 
+                  range_ = None, 
+                  dim3_ = False, 
+                  save_ = False, 
+                  out_where_ = None) :
         
         if n_:
             n = n_
@@ -207,7 +239,7 @@ class PreProcess:
                 self.y.append(temp_emo)
             
             data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
-            data_y = pd.Series(self.y)
+            data_y = pd.Series(self.y, dtype = int)
             
             if save_:
                 
@@ -216,7 +248,7 @@ class PreProcess:
                     out_where = f"{out_where_}/dataframeALL.csv"
                 else:
                     
-                    out_where = r"output/dataframeALL.csv"
+                    out_where = r"Faze1/output/CSVs/dataframeALL.csv"
                 
                 data_x = data_x.set_axis(['Mean','Median','Mode','STD','Variance','Quantile1','Quantile2'], axis=1)
                 data = data_x.assign( target = data_y )
@@ -244,7 +276,7 @@ class PreProcess:
                 self.dataframe.append(temp_stat)
             
             data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
-            data_y = pd.Series(self.y, dtype = np.float64)
+            data_y = pd.Series(self.y, dtype = int)
             
             if save_:
                 
@@ -261,7 +293,7 @@ class PreProcess:
                 return
             
             else:
-                return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = np.float64)
+                return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
         
         for any_ in self.sublists:
             
@@ -277,7 +309,7 @@ class PreProcess:
         
         
         data_x = pd.DataFrame(self.DataFrame, dtype = np.float64)
-        data_y = pd.Series(self.y, dtype = np.float64)        
+        data_y = pd.Series(self.y, dtype = int)        
         
         if save_:
             
@@ -285,8 +317,8 @@ class PreProcess:
                 
                 out_where = out_where_
             else:
-                
-                out_where = r"output/data.csv"           
+                self.name_helper()
+                out_where = f"Faze1/output/CSVs/data{self.random_id}.csv"           
             
             data = data_x.assign( target = data_y )
             data.to_csv(out_where, index=False)
@@ -294,4 +326,68 @@ class PreProcess:
             
         else:
             
-            return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = np.float64)
+            return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
+    
+    
+    def extract_all_with_each_col(self = None,
+            data_: dict = None,
+            n_col = None,
+            save_ = False,
+            return_ = False,
+            self_needed = False) :
+        
+        warn("\nThe Only Supported Type for data is Python-Dict , use dict() to retype if its a DataFrame \n", category=UserWarning, stacklevel=2)
+        sleep(1.15)
+        if self == None:
+            print("Ready, wait for data_ and n_col")
+            sleep(0.2)
+            if data_ == None :
+                return
+            else:
+                print('processing')
+                pass
+        if data_:
+            data = pd.DataFrame(data_)
+            if n_col:
+                n_col = n_col
+            else:
+                n_col = self.data_col
+        else:
+            try:
+                data = self.sorted_data
+                n_col = self.data_col
+            except:
+                raise ValueError( " There was an Error , try using main.PreProcess.fix_data() func or main.PreProcess.initial_data() first !")
+        
+        extracted = data.iloc[:, n_col].apply(pd.Series)
+        pixel_count = [ i+1 for i in range( extracted.shape[1] ) ]
+        new_cols = [ f'pixel_{j}' for j in pixel_count ]
+        extracted.columns = new_cols
+        temp_df = pd.concat([data, extracted], axis=1)
+        data_new = temp_df.drop(data.columns[n_col], axis=1)
+        if save_ :
+            if self != None:
+                self.save_data( data_ = data_new, name_= 'Faze1/output/CSVs/AllWithEachCol.csv')
+                if self_needed:
+                    self.extracted = extracted
+                if return_:
+                    return extracted
+            else:
+                data_new.to_csv()
+        
+        elif return_:
+            if self_needed:
+                if self != None:
+                    self.extracted = extracted
+                else:
+                    pass
+            return extracted
+        
+        elif self_needed:
+            self.extracted = extracted
+            return
+        else:
+            print(" This ProceSS iS EXecUtable !")
+            return
+
+#end#
