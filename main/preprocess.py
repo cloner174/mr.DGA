@@ -17,7 +17,6 @@ class PreProcess :
         self.n_cols = None
         self.col_names = None
         self.data_col = None
-        self.sorted_data = None
         self.input = None
         self.emotion_col_name = None
         self.emotion_col_num = None
@@ -25,17 +24,6 @@ class PreProcess :
         self.data_col = None
         self.disturbu = []
         self.y = []
-        self.sublists = []
-        self.dataframe = []
-        self.DataFrame = {
-            'Mean' : [],
-            'Median' : [],
-            'Mode' : [],
-            'STD' : [],
-            'Variance' : [],
-            'Quantile1' : [],
-            'Quantile2' : []
-        }
         self.extracted = None
     
     
@@ -62,26 +50,21 @@ class PreProcess :
         self.col_names = list(self.data.columns)
         
         if emotion_col:
-            
             self.emotion_col_name = emotion_col
             self.emotion_col_num = emotion_col_num
         else:
-            
             self.emotion_col_name = 'emotion'
             self.emotion_col_num = 0
             
         if data_col:
-            
             self.data_col = data_col
         else:
-            
             self.data_col = 1
-        if need_sort != True :
-            
-            self.sorted_data = self.data
         
+        if need_sort != True :
+            pass
         else:
-            self.sorted_data = self.data.sort_values( by = self.emotion_col_name )
+            self.data = self.data.sort_values( by = self.emotion_col_name )
         
         if emotion_col_num:
             self.emotions = list( (self.data.iloc[:, self.emotion_col_num]).unique() )
@@ -90,13 +73,11 @@ class PreProcess :
     
     
     def name_helper(self):
-        
         import uuid
         self.random_id = uuid.uuid4().hex
     
     
     def save_data(self, data_ = None, name_ = None) :
-        
         
         if name_:
             name_ = name_
@@ -106,7 +87,7 @@ class PreProcess :
         if data_:
             data_.to_csv(name_)
         else:
-            self.sorted_data.to_csv(name_, index= False)
+            self.data.to_csv(name_, index= False)
     
     
     def fix_data(self, returnArray = False, 
@@ -117,7 +98,7 @@ class PreProcess :
                  name_ = None):
         #                                                            
         #                      # Not Inplace, You should assing it to a variable to store changes #
-        data = self.sorted_data
+        data = self.data
         data_ = np.array(data)
         if ncol_start:
             start_ = ncol_start
@@ -129,28 +110,22 @@ class PreProcess :
             end_ = int( data_.shape[1] ) #Columns
         
         for i in range( 0,  self.n_rows ):  #Rows
-            
             for j in range(start_, end_):                    #Columns
-                
                 temp_ =  data_[i, j]
                 pix_val = np.array(temp_.split(), dtype=int)
                 data_[i, j] = pix_val
         
         if returnArray != False:
-            
             data = data_
-        
         else:
             data = pd.DataFrame(data_)
             data = data.set_axis( self.col_names, axis= 'columns' )
         
-        self.sorted_data = data
-        
+        self.data = data
         if save_:
             self.save_data(name_ = name_)
-        
         if return_:
-            return self.sorted_data            
+            return self.data            
     
     
     def stat_jobs(self, split_ = True, 
@@ -160,37 +135,43 @@ class PreProcess :
                   save_ = False, 
                   out_where_ = None) :
         
+        DataFrame = {
+            'Mean' : [],
+            'Median' : [],
+            'Mode' : [],
+            'STD' : [],
+            'Variance' : [],
+            'Quantile1' : [],
+            'Quantile2' : []
+        }
+        data = self.data
+        y_ = []
+        sublists = []
+        dataframe = []    
         if n_:
             n = n_
         else:
-            n = 7
-        
+            n = 4
         if range_:
             rows_ = range_
         else:
             rows_ = self.n_rows
         
-        
+        for i in range(rows_) :
+            temp = data.values[i, self.data_col]
+            temp_emo = data.values[i, self.emotion_col_num]
+            temp_stat = Stats.stat(temp)
+            dataframe.append(temp_stat)
+            y_.append(temp_emo)
+        data_x = pd.DataFrame(dataframe, dtype = np.float64)
+        data_y = pd.Series(y_, dtype = int)
+        ########################################################################3
         if split_ == False:
-            for i in range(rows_) :
-                temp = (self.sorted_data).values[i, self.data_col]
-                temp_emo = (self.sorted_data).values[i, self.emotion_col_num]
-                temp_stat = Stats.stat(temp)
-                self.dataframe.append(temp_stat)
-                self.y.append(temp_emo)
-            
-            data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
-            data_y = pd.Series(self.y, dtype = int)
-            
             if save_:
-                
                 if out_where_:
-                    
                     out_where = out_where_
                 else:
-                    
                     out_where = r"data/Faze1/output/CSVs/dataframeALL.csv"
-                
                 data_x = data_x.set_axis(['Mean','Median','Mode','STD','Variance','Quantile1','Quantile2'], axis=1)
                 data = data_x.assign( target = data_y )
                 data.to_csv(out_where, index=False)
@@ -199,45 +180,38 @@ class PreProcess :
             else:
                 return np.asarray(data_x, dtype = np.float64), np.asarray(data_y)     
         
-        
         for i in range(rows_) :
-            
-            temp = (self.sorted_data).values[i, self.data_col]
+            temp = data.values[i, self.data_col]
             temp_sub = Stats.sublist(temp, n)
             for any_list in temp_sub:
-                
-                self.y.append(self.sorted_data.iloc[i,self.emotion_col_num])
-                self.sublists.append(any_list)
-        
+                y_.append(data.iloc[i,self.emotion_col_num])
+                sublists.append(any_list)
+        self.y = y_
+        self.data = data
+        del data
+        del y_
         
         if dim3_:
-            
-            for any_ in self.sublists:
+            for any_ in sublists:
                 temp_stat = Stats.stat(any_)
-                self.dataframe.append(temp_stat)
-            
-            data_x = pd.DataFrame(self.dataframe, dtype = np.float64)
-            data_y = pd.Series(self.y, dtype = int)
-            
+                dataframe.append(temp_stat)
+            data_x = pd.DataFrame(dataframe, dtype = np.float64)
+            data_y = pd.Series(y_, dtype = int)
             if save_:
-                
                 if out_where_:
-                    
                     out_where = out_where_
                 else:
-                    
                     out_where = r"output/dataframe.csv"
-                
                 data = data_x.assign( target = data_y )
                 data.to_csv(out_where, index=False)
                 print(f" The PrePared DataSet is now available here -->> {out_where}")
                 return
-            
             else:
+                del sublists
+                del dataframe
                 return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
         
-        for any_ in self.sublists:
-            
+        for any_ in sublists:
             #print(len(self.sublists))
             temp_stat = Stats.stat(any_)
             self.DataFrame['Mean'].append( np.float64(temp_stat[0]) )
@@ -247,26 +221,19 @@ class PreProcess :
             self.DataFrame['Variance'].append( np.float64(temp_stat[4] ))
             self.DataFrame['Quantile1'].append( np.float64(temp_stat[5] ))
             self.DataFrame['Quantile2'].append( np.float64(temp_stat[6]) )
-        
-        
         data_x = pd.DataFrame(self.DataFrame, dtype = np.float64)
-        data_y = pd.Series(self.y, dtype = int)        
+        data_y = pd.Series(self.y, dtype = int)
         
         if save_:
-            
             if out_where_:
-                
                 out_where = out_where_
             else:
                 self.name_helper()
                 out_where = f"data/Faze1/output/CSVs/data{self.random_id}.csv"           
-            
             data = data_x.assign( target = data_y )
             data.to_csv(out_where, index=False)
             print(f" The PrePared DataSet is now available here -->> {out_where}")
-            
         else:
-            
             return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
     
     
@@ -288,6 +255,7 @@ class PreProcess :
             else:
                 print('processing')
                 pass
+        
         if data_:
             data = pd.DataFrame(data_)
             if n_col:
@@ -296,7 +264,7 @@ class PreProcess :
                 n_col = self.data_col
         else:
             try:
-                data = self.sorted_data
+                data = self.data
                 n_col = self.data_col
             except:
                 raise ValueError( " There was an Error , try using main.PreProcess.fix_data() func or main.PreProcess.initial_data() first !")
@@ -307,6 +275,7 @@ class PreProcess :
         extracted.columns = new_cols
         temp_df = pd.concat([data, extracted], axis=1)
         data_new = temp_df.drop(data.columns[n_col], axis=1)
+        
         if save_ :
             data_new.to_csv(name_)
             if self != None:
@@ -328,8 +297,8 @@ class PreProcess :
         elif self_needed:
             self.extracted = data_new
             return
+        
         else:
             print(" This ProceSS iS EXecUtable !")
             return
-
 #end#

@@ -4,17 +4,16 @@
 #github.com/cloner174
 #
 from main.SKjobs import SKlearn
-from main.stats import NameHelper
-
 
 PATHes_from_before = {
     'Stat_jobs_n2' : 'data/Faze1/output/CSVs/Stat_jobs_n2.csv',
     'Stat_jobs_noSplit' : 'data/Faze1/output/CSVs/Stat_jobs_noSplit.csv',
     'AllWithEachCol' : 'data/Faze1/output/CSVs/AllWithEachCol.csv'
 }
+
 test = SKlearn()
 
-test.load_data(PATHes_from_before['Stat_jobs_n2'])
+test.load_data(PATHes_from_before['Stat_jobs_noSplit'])
 
 test.initial_data()
 
