@@ -66,4 +66,57 @@ class Stats:
             *[np.quantile(subset, q) for q in quantiles]
         ]
 
+import matplotlib.pyplot as plt
+from PIL import Image
+
+class Images:
+    
+    def save(data_row, img_dir, img_size=(48, 48)):
+        """Converts pixel strings to image and saves to the respective directory."""
+        
+        # Split string and convert to uint8 numpy array
+        pixels = np.array(data_row[' pixels'].split(), dtype='uint8')
+        try:
+            # Reshape into image
+            image = pixels.reshape(img_size)
+        except ValueError:
+            print(f"Error reshaping image: {img_size} may not be the right dimensions.")
+            return False
+        # Create a PIL image
+        img = Image.fromarray(image, 'L')  # 'L' for grayscale
+        # Define file path
+        file_path = os.path.join(img_dir, f"{data_row.name}.png")
+        # Save image
+        img.save(file_path)
+        return True
+    
+    def plot(data, num_images):
+        fig, axes = plt.subplots(1, num_images, figsize=(15, 5))
+        for i, ax in enumerate(axes):
+            # Process each image
+            # Split the string by space and convert to numpy array of integers
+            pixel_values = np.array(data[' pixels'].iloc[i].split(), dtype='uint8')
+            # Assume the images are 48x48
+            image_array = pixel_values.reshape(48, 48)
+            ax.imshow(image_array, cmap='gray')
+            ax.set_title(f'Emotion: {data["emotion"].iloc[i]}')
+            ax.axis('off')
+        
+        plt.show()
+
+
+import os
+class Utilities:
+    
+    def create_directories(base_path, labels):
+        """Creates directories for each label if they don't already exist."""
+        directories = {}
+        for label in labels:
+            dir_path = os.path.join(base_path, str(label))
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
+            directories[label] = dir_path
+        
+        return directories
+
 #end#

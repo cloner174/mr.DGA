@@ -133,7 +133,8 @@ class PreProcess :
                   range_ = None, 
                   dim3_ = False, 
                   save_ = False, 
-                  out_where_ = None) :
+                  out_where_ = None,
+                  return_in_DataFrame: bool = False) :
         
         DataFrame = {
             'Mean' : [],
@@ -214,14 +215,14 @@ class PreProcess :
         for any_ in sublists:
             #print(len(self.sublists))
             temp_stat = Stats.stat(any_)
-            self.DataFrame['Mean'].append( np.float64(temp_stat[0]) )
-            self.DataFrame['Median'].append( np.float64(temp_stat[1]) )
-            self.DataFrame['Mode'].append( np.float64(temp_stat[2] ))
-            self.DataFrame['STD'].append( np.float64(temp_stat[3] ))
-            self.DataFrame['Variance'].append( np.float64(temp_stat[4] ))
-            self.DataFrame['Quantile1'].append( np.float64(temp_stat[5] ))
-            self.DataFrame['Quantile2'].append( np.float64(temp_stat[6]) )
-        data_x = pd.DataFrame(self.DataFrame, dtype = np.float64)
+            DataFrame['Mean'].append( np.float64(temp_stat[0]) )
+            DataFrame['Median'].append( np.float64(temp_stat[1]) )
+            DataFrame['Mode'].append( np.float64(temp_stat[2] ))
+            DataFrame['STD'].append( np.float64(temp_stat[3] ))
+            DataFrame['Variance'].append( np.float64(temp_stat[4] ))
+            DataFrame['Quantile1'].append( np.float64(temp_stat[5] ))
+            DataFrame['Quantile2'].append( np.float64(temp_stat[6]) )
+        data_x = pd.DataFrame(DataFrame, dtype = np.float64)
         data_y = pd.Series(self.y, dtype = int)
         
         if save_:
@@ -234,7 +235,10 @@ class PreProcess :
             data.to_csv(out_where, index=False)
             print(f" The PrePared DataSet is now available here -->> {out_where}")
         else:
-            return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
+            if return_in_DataFrame:
+                return data_x, data_y
+            else:
+                return np.asarray(data_x, dtype = np.float64), np.asarray(data_y, dtype = int)
     
     
     def extract_all_with_each_col(self = None,
