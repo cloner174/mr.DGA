@@ -19,7 +19,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 class SKlearn :
     
-
+    
     def __init__(self) :
         
         self.data = None
@@ -34,16 +34,16 @@ class SKlearn :
         self.Standard_X = None
         self.MinMax_X = None
         self.Manual_X = None
-
-
+    
+    
     def load_data(self, data_path) :
         
         self.data = data_path
         self.data = pd.read_csv(self.data)
-
-
+    
+    
     def load_data_from_PreProcess(self, 
-                                  call_extracted_all = False) :
+                                    call_extracted_all = False) :
         
         from main import PreProcess
         
@@ -55,8 +55,8 @@ class SKlearn :
             self.data = pre_process.extract_all_with_each_col(return_=True)
         else:
             self.data = pre_process.fix_data(return_=True)    
-
-
+    
+    
     def initial_data(self, target_col_name = 'target', return_Xy = False, also_return_data = False) :
         
         self.tar_col_name = target_col_name
@@ -71,9 +71,9 @@ class SKlearn :
             if also_return_data:
                 return self.X, self.y, self.data
             else:
-                return self.X, self.y   
-
-
+                return self.X, self.y
+    
+    
     def make_array(self, reType_All = False, return_ = True) :
         
         self.initial_data(self.tar_col_name)
@@ -90,21 +90,21 @@ class SKlearn :
                 return
         
         return X, y
-
-
+    
+    
     def cal_corr(self,
-                 show_ = True,
-                 standard_x = False,
-                 minmax_x = False,
-                 manual_x = False,
-                 return_ = False,
-                 title_ = 'Correlation Matrix',
-                 figsize_ = (10, 8),
-                 save_corr = False,
-                 save_corr_where = 'data/Faze1/output/CSVs/cal_corr',
-                 save_fig = False,
-                 save_fig_where = 'data/Faze1/output/Pics/cal_corr',
-                 name_ = None) :
+                    show_ = True,
+                    standard_x = False,
+                    minmax_x = False,
+                    manual_x = False,
+                    return_ = False,
+                    title_ = 'Correlation Matrix',
+                    figsize_ = (10, 8),
+                    save_corr = False,
+                    save_corr_where = 'data/Faze1/output/CSVs/cal_corr',
+                    save_fig = False,
+                    save_fig_where = 'data/Faze1/output/Pics/cal_corr',
+                    name_ = None) :
         
         if standard_x:
             self.corr_ = self.data_Standard.corr()
@@ -191,7 +191,7 @@ class SKlearn :
     
     
     def manual_scale(self,
-                     need_y = False) :
+                        need_y = False) :
         
         Manual_X, y_ = self.make_array()
         
@@ -214,23 +214,23 @@ class SKlearn :
     
     
     def get_best_features(self,feturs_to_slct = 5,
-                          solver_ = 'sag',
-                          C_ = 0.1,
-                          standard_x = False,
-                          minmax_x = False ,
-                          manual_x = False,
-                          Just_for_corr = False, 
-                          silently = True, 
-                          return_ = False) :
+                            solver_ = 'sag',
+                            C_ = 0.1,
+                            standard_x = False,
+                            minmax_x = False ,
+                            manual_x = False,
+                            Just_for_corr = False, 
+                            silently = True, 
+                            return_ = False) :
         
         warnings.simplefilter("ignore", category=FutureWarning)
         
         logist_model = LogisticRegression( C = C_, solver = solver_ )
         
         gbf = RFE( estimator = self.logist_model, 
-                  n_features_to_select = feturs_to_slct)
+                    n_features_to_select = feturs_to_slct)
         
-        if standard_X:
+        if standard_x:
             X, y = self.scaling(return_ = True, standard_x = True, need_y = True)
         elif minmax_x:
             X, y = self.scaling(return_ = True, minmax_x = True, need_y = True)
@@ -243,7 +243,7 @@ class SKlearn :
         data_x = pd.DataFrame(self.Standard_X)
         data_y = pd.Series(self.y)
         data = data_x.assign( target = data_y )
-        if standard_X:
+        if standard_x:
             data_x = pd.DataFrame(self.Standard_X)
             data_y = pd.Series(self.y)
             data = data_x.assign( target = data_y )
@@ -301,7 +301,7 @@ class SKlearn :
 
 
     def models(self, save_ = True, to_save_ = 'data/Faze1/output/CSVs',
-               test_size_ = 0.2, n_estimators_ = 1000, ) :
+                test_size_ = 0.2, n_estimators_ = 1000, ) :
         
         X_train, X_test, y_train, y_test = train_test_split(self.X, self.y, test_size=test_size_)
         

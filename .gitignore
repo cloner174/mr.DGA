@@ -11,7 +11,7 @@ __pycache__/
 /data/Faze1/output/CSVs/AllWithEachCol.csv
 #*.py[cod]
 #*$py.class
-
+data/Faze1/output/Pics/
 # C extensions
 #*.so
 
