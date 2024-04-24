@@ -7,3 +7,7 @@ EmoTriangulate is a cutting-edge repository designed to harness the power of Del
 # Debian/Ubuntu/Kali
 
     sudo apt install libcanberra-gtk-module libcanberra-gtk3-module
+
+## Mistakes and Corrections
+
+To err is human, and nobody likes a perfect person! If you come across any mistakes or if you have questions, feel free to raise an issue or submit a pull request.
