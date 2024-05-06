@@ -11,11 +11,15 @@ __pycache__/
 /data/Faze1/output/CSVs/AllWithEachCol.csv
 #*.py[cod]
 #*$py.class
-/data/
+/data/content/
+/data/output/
+/data/Faze1/output
+/data/Faze1/input/data-pix.csv
+/data/Faze1/input/AllWithEachCol.csv
+
 # C extensions
 #*.so
 /facial-landmarks-recognition
-
 /data/output/face_directory/
 /data/output/non_face/
 # Distribution / packaging
