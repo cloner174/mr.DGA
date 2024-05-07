@@ -1,27 +1,17 @@
 # Byte-compiled / optimized / DLL files
-/data/Faze1/input/dataset.csv
-/docs
-/out
-/Gallary
+
 __pycache__/
-/Rside/
-/scripts/
+
 /index.py
 /main/__pycache__
-/data/Faze1/output/CSVs/AllWithEachCol.csv
+
 #*.py[cod]
 #*$py.class
-/data/content/
-/data/output/
-/data/Faze1/output
-/data/Faze1/input/data-pix.csv
-/data/Faze1/input/AllWithEachCol.csv
 
 # C extensions
 #*.so
 /facial-landmarks-recognition
-/data/output/face_directory/
-/data/output/non_face/
+
 # Distribution / packaging
 #.Python
 #build/
@@ -174,7 +164,3 @@ __pycache__/
 #  and can be added to the global gitignore or merged into this file.  For a more nuclear
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
-Faze1/output/CSVs/datatest.csv
-Faze1/output/CSVs/Stat_jobs_n_2.csv
-Faze1/output/Pics/test/a.py
-data7d3f7977e3ae4911a69086071d6f9764.csv
