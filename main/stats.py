@@ -27,14 +27,14 @@ class Stats:
             if i == 0:
                 sub1 = li[:te+1]
                 if len(sub1) >= 2:
-                  ll.append(li[:te+1])
+                    ll.append(li[:te+1])
             else:
-               if i == len(split_index)-1:
-                   ll.append( li[te:] )
-               elif te < max_index:
-                   ll.append( ( li[  split_index[i-1] : split_index[i]  ]  ) )
-               else:
-                   pass
+                if i == len(split_index)-1:
+                    ll.append( li[te:] )
+                elif te < max_index:
+                    ll.append( ( li[  split_index[i-1] : split_index[i]  ]  ) )
+                else:
+                    pass
         
         return ll
     
@@ -107,6 +107,29 @@ class Images:
 
 import os
 class Utilities:
+    
+    def strings_with_number_inside( data,
+                                    column_range_starts : int = 0,
+                                    column_range_ends : int = None,
+                                    seperator = None):
+        start = column_range_starts
+        end = int( data.shape[1] ) if column_range_ends is None else column_range_ends
+        new_data = {}
+        try :
+            for i in range( data.shape[0] ) :
+                temp_new_data = []
+                for j in range( start, end ) :
+                    cells_real_values = np.array(data.iloc[i, j].split(sep = seperator), dtype='uint8')
+                    temp_new_data.append(cells_real_values)
+                new_data[i] = temp_new_data
+
+            return new_data
+        except:
+            if isinstance( data , np.array ) :
+                pass
+            else:
+                raise TypeError( " data just could be  PandasDataFrame  or  NumpyArray  ! ")    
+    
     
     def create_directories(base_path, labels):
         """Creates directories for each label if they don't already exist."""
